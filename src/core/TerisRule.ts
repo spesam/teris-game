@@ -4,23 +4,30 @@ import { Square } from "./Square";
 import { SquareGroup } from "./SquareGroup";
 
 export class TerisRule {
-    static canIMove(shape: Shape, targetCenterPoint: IPoint) {
-        const nextPoint = shape.map(item => {
+    static canIMove(shape: Shape, targetCenterPoint: IPoint, exists: Square[]) {
+        const nextPoints = shape.map(item => {
             return {
                 x: item.x + targetCenterPoint.x,
                 y: item.y + targetCenterPoint.y
             }
         });
         //边界判断
-        const res = nextPoint.some(item => item.x < 0 || item.x > GameConfig.gameArea.width - 1 || item.y < 0 || item.y > GameConfig.gameArea.height - 1)
+        let res = nextPoints.some(item => item.x < 0 || item.x > GameConfig.gameArea.width - 1 || item.y < 0 || item.y > GameConfig.gameArea.height - 1)
         if (res) {
             // 超出了边界
             return false
         }
+
+        // 判断方块是否与已存在的方块有重叠
+        res = nextPoints.some(p => exists.some(sq => sq.point.x === p.x && sq.point.y === p.y));
+        if (res) {
+            return false;
+        }
+        
         return true
     }
 
-    static move(teris: SquareGroup, direction: MoveDirection) {
+    static move(teris: SquareGroup, direction: MoveDirection, exists: Square[]) {
         let nextCenterPoint = {
             x: teris.centerPoint.x,
             y: teris.centerPoint.y
@@ -39,7 +46,7 @@ export class TerisRule {
             nextCenterPoint.x++
         }
 
-        if (this.canIMove(teris.shape, nextCenterPoint)) {
+        if (this.canIMove(teris.shape, nextCenterPoint, exists)) {
             teris.centerPoint = nextCenterPoint;
             return true
         } else {
@@ -47,13 +54,13 @@ export class TerisRule {
         }
     }
 
-    static alwaysMove(teris: SquareGroup, direction: MoveDirection) {
-        while (this.move(teris, direction)) { }
+    static alwaysMove(teris: SquareGroup, direction: MoveDirection, exists: Square[]) {
+        while (this.move(teris, direction, exists)) { }
     }
 
-    static rotate(teris: SquareGroup) {
+    static rotate(teris: SquareGroup, exists: Square[]) {
         const newShape = teris.rotateAfterShape();
-        if (this.canIMove(newShape, teris.centerPoint)) {
+        if (this.canIMove(newShape, teris.centerPoint, exists)) {
             teris.rotateSquareGroup();
             return true
         }

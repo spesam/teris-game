@@ -1,5 +1,6 @@
 import { GameStatus, GameViewer, MoveDirection } from "../types";
 import { GameConfig } from "./GameConfig";
+import { Square } from "./Square";
 import { SquareGroup } from "./SquareGroup";
 import { createTeris, TShapeTeris } from "./Teris";
 import { TerisRule } from "./TerisRule";
@@ -15,7 +16,8 @@ export class Game {
     private _timer?: number;
     // 间隔时间
     private duration: number = 1000;
-
+    // 已保存的方块
+    private _exists: Square[] = [];
     constructor(private _viewer: GameViewer) {
         this.resetCenterPoint(GameConfig.nextArea.width, this._nextTeris);
         this._viewer.showNext(this._nextTeris);
@@ -36,25 +38,26 @@ export class Game {
 
     controlLeft() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.move(this._curTeris, MoveDirection.left);
+            TerisRule.move(this._curTeris, MoveDirection.left,this._exists);
         }
     }
 
     controlRight() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.move(this._curTeris, MoveDirection.right);
+            TerisRule.move(this._curTeris, MoveDirection.right,this._exists);
         }
     }
 
     controlDown() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.alwaysMove(this._curTeris, MoveDirection.down);
+            TerisRule.alwaysMove(this._curTeris, MoveDirection.down,this._exists);
+            this.hitBottom();
         }
     }
 
     controlRotate() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.rotate(this._curTeris);
+            TerisRule.rotate(this._curTeris,this._exists);
         }
     }
     /**
@@ -66,7 +69,16 @@ export class Game {
             clearInterval(this._timer);
             this._timer = undefined;
         }
-    };
+    }
+    /**
+     * 触底之后调用
+     */
+    hitBottom() {
+        // 将当前的方块加入到已存在的方块中
+        this._exists.push(...this._curTeris?.squares!);
+        this.switchTeris();
+    }
+
     /**
      * 切换方块
      */
@@ -86,7 +98,11 @@ export class Game {
             return
         }
         this._timer = setInterval(() => {
-            TerisRule.move(this._curTeris!, MoveDirection.down)
+            const isMove = TerisRule.move(this._curTeris!, MoveDirection.down,this._exists);
+            if (!isMove) {
+                // 触底，不能往下移动了
+                this.hitBottom();
+            }
         }, this.duration)
     }
 
