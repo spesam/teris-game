@@ -1,4 +1,5 @@
 import { Square } from "../core/Square"
+import { SquareGroup } from "../core/SquareGroup"
 
 export interface IPoint {
     readonly x: number;
@@ -23,4 +24,24 @@ export enum MoveDirection {
     right,
     down,
     up
+}
+
+export enum GameStatus {
+    init,
+    gameOn,
+    gamePause,
+    gameOver,
+}
+
+export interface GameViewer {
+    /**
+     * 显示下一个方块
+     * @param teris 下一个方块
+     */
+    showNext(teris: SquareGroup): void
+    /**
+     * 切换方块显示
+     * @param teris 切换的方块
+     */
+    switchTeris(teris: SquareGroup): void
 }

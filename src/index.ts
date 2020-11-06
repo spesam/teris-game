@@ -3,39 +3,30 @@ import $ from "jquery"
 import { createTeris } from "./core/Teris";
 import { TerisRule } from "./core/TerisRule";
 import { MoveDirection } from "./types";
+import { Game } from "./core/Game";
+import { GamePageViewer } from "./core/viewer/GamePageViewer";
 
-$(".col .down").on("click", () => {
-    TerisRule.move(teris, MoveDirection.down)
-})
-$(".col .up").on("click", () => {
-    TerisRule.move(teris, MoveDirection.up)
-})
-$(".col .left").on("click", () => {
-    TerisRule.move(teris, MoveDirection.left)
-})
-$(".col .right").on("click", () => {
-    TerisRule.move(teris, MoveDirection.right)
-})
+const g = new Game(new GamePageViewer());
 
-$(".col .rotate").on("click", () => {
-    TerisRule.rotate(teris);
+$(".start").on("click", () => {
+    g.start();
+})
+$(".pause").on("click", () => {
+    g.pause();
+})
+$(".down").on("click", () => {
+    g.controlDown();
 })
 
-const teris = createTeris({ x: 3, y: 3 })
+$(".left").on("click", () => {
+    g.controlLeft();
+})
+$(".right").on("click", () => {
+    g.controlRight();
+})
 
-teris.squares.forEach(item => {
-    item.viewer = new SquarePageViewer(item, $("#root"));
+$(".rotate").on("click", () => {
+    g.controlRotate();
 })
 
 
-
-const user = {
-    name: "sam",
-    gender: "男",
-    age: 27,
-    loves: ["英雄联盟", "电影"]
-}
-
-const { name, gender, ...other } = user;
-
-console.log(name, gender, other);
