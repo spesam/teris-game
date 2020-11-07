@@ -84,10 +84,10 @@ const terisShapees = [
 
 
 const colors = [
-    "red",
-    "orange",
-    "blue",
-    "green"
+    "aqua",
+    "salmon",
+    "deeppink",
+    "darkviolet"
 ]
 
 export function createTeris(centerPoint: IPoint) {

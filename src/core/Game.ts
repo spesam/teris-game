@@ -1,9 +1,8 @@
-import { timers } from "jquery";
 import { GameStatus, IGameViewer, MoveDirection } from "../types";
 import { GameConfig } from "./GameConfig";
 import { Square } from "./Square";
 import { SquareGroup } from "./SquareGroup";
-import { createTeris, TShapeTeris } from "./Teris";
+import { createTeris } from "./Teris";
 import { TerisRule } from "./TerisRule";
 
 export class Game {
@@ -16,7 +15,7 @@ export class Game {
     // 计时器
     private _timer?: number;
     // 间隔时间
-    private duration: number = 1000;
+    private _duration: number = 1000;
     // 已保存的方块
     private _exists: Square[] = [];
     // 积分
@@ -33,9 +32,20 @@ export class Game {
     public set score(val) {
         this._score = val;
         this._viewer.showScore(val);
+        const level = GameConfig.level.filter(item => item.score < val).pop()!;
+        if (level.duration === this._duration) {
+            return
+        }
+        this._duration = level.duration;
+        if (this._timer) {
+            clearInterval(this._timer);
+            this._timer = undefined;
+            this.autoDrop();
+        }
     }
 
     constructor(private _viewer: IGameViewer) {
+        this._duration = GameConfig.level[0].duration;
         this._nextTeris = createTeris({ x: 0, y: 0 }); //没有含义，只是为了不让TS报错
         this.createNext();
         this._viewer.init(this);
@@ -163,7 +173,7 @@ export class Game {
                 // 触底，不能往下移动了
                 this.hitBottom();
             }
-        }, this.duration)
+        }, this._duration)
     }
 
     /**
