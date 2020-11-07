@@ -35,7 +35,7 @@ export class SquarePageViewer implements IViewer {
     public get isShow() {
         return this._isShow;
     }
-    
+
     constructor(private square: Square, private container: JQuery<HTMLElement>) { }
 }
 

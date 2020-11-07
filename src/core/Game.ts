@@ -109,14 +109,12 @@ export class Game {
      */
     private switchTeris() {
         this._curTeris = this._nextTeris;
+        this.resetCenterPoint(GameConfig.gameArea.width, this._curTeris!);
         this._curTeris.squares.forEach(sq => {
-            if(sq.viewer){
+            if (sq.viewer) {
                 sq.viewer.remove();
             }
         })
-        console.log(this._curTeris.squares);
-        this.resetCenterPoint(GameConfig.gameArea.width, this._curTeris!);
-        console.log(this._curTeris.squares);
         // 有可能出现的问题：当前方一出现时，就已经和之前的方块重叠了
         if (!TerisRule.canIMove(this._curTeris.shape, this._curTeris.centerPoint, this._exists)) {
             // 游戏结束
@@ -127,6 +125,7 @@ export class Game {
 
             return;
         }
+
         this.createNext();
         this._viewer.switchTeris(this._curTeris);
     };
