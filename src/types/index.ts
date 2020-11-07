@@ -1,3 +1,4 @@
+import { Game } from "../core/Game";
 import { SquareGroup } from "../core/SquareGroup";
 
 export interface IPoint {
@@ -37,10 +38,22 @@ export interface IGameViewer {
      * 显示下一个方块
      * @param teris 下一个方块
      */
-    showNext(teris: SquareGroup): void
+    showNext(teris: SquareGroup): void;
+
     /**
      * 切换方块显示
      * @param teris 切换的方块
      */
-    switchTeris(teris: SquareGroup): void
+    switchTeris(teris: SquareGroup): void;
+
+    /**
+     * 完成界面的初始化
+     */
+    init(game: Game): void
+
+    showScore(scroe: number): void
+
+    onGamePause(): void;
+    onGameStart(): void;
+    onGameOver(): void;
 }

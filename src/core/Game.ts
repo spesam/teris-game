@@ -1,8 +1,9 @@
+import { timers } from "jquery";
 import { GameStatus, IGameViewer, MoveDirection } from "../types";
 import { GameConfig } from "./GameConfig";
 import { Square } from "./Square";
 import { SquareGroup } from "./SquareGroup";
-import { createTeris } from "./Teris";
+import { createTeris, TShapeTeris } from "./Teris";
 import { TerisRule } from "./TerisRule";
 
 export class Game {
@@ -18,10 +19,27 @@ export class Game {
     private duration: number = 1000;
     // 已保存的方块
     private _exists: Square[] = [];
+    // 积分
+    private _score: number = 0;
+
+    public get gameSratus() {
+        return this._gameStatus;
+    }
+
+    public get score() {
+        return this._score;
+    }
+
+    public set score(val) {
+        this._score = val;
+        this._viewer.showScore(val);
+    }
 
     constructor(private _viewer: IGameViewer) {
         this._nextTeris = createTeris({ x: 0, y: 0 }); //没有含义，只是为了不让TS报错
         this.createNext();
+        this._viewer.init(this);
+        this._viewer.showScore(this.score);
     }
 
     private createNext() {
@@ -39,6 +57,7 @@ export class Game {
         this._exists = [];
         this.createNext();
         this._curTeris = undefined;
+        this.score = 0;
     }
     // 游戏开始
     public start() {
@@ -55,6 +74,7 @@ export class Game {
             this.switchTeris();
         };
         this.autoDrop();
+        this._viewer.onGameStart();
     };
 
     controlLeft() {
@@ -89,6 +109,7 @@ export class Game {
             this._gameStatus = GameStatus.gamePause;
             clearInterval(this._timer);
             this._timer = undefined;
+            this._viewer.onGamePause();
         }
     }
     /**
@@ -99,8 +120,9 @@ export class Game {
         this._exists.push(...this._curTeris?.squares!);
         // 处理移除
         const num = TerisRule.deleteSquare(this._exists);
-        console.log(num);
-
+        // 增加积分
+        this.addScore(num);
+        // 切换方块
         this.switchTeris();
     }
 
@@ -121,8 +143,7 @@ export class Game {
             this._gameStatus = GameStatus.gameOver;
             clearInterval(this._timer);
             this._timer = undefined;
-            console.log("游戏结束了");
-
+            this._viewer.onGameOver();
             return;
         }
 
@@ -159,6 +180,24 @@ export class Game {
                 x: teris.centerPoint.x,
                 y: teris.centerPoint.y + 1,
             }
+        }
+    }
+
+    private addScore(lineNum: number) {
+        if (lineNum === 0) {
+            return;
+        }
+        else if (lineNum === 1) {
+            this.score += 10;
+        }
+        else if (lineNum === 2) {
+            this.score += 25
+        }
+        else if (lineNum === 3) {
+            this.score += 40
+        }
+        else if (lineNum === 4) {
+            this.score += 60
         }
     }
 }

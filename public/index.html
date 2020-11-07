@@ -12,16 +12,44 @@
         }
 
         .panel {
-            width: 400px;
-            height: 400px;
             position: relative;
             background: #000;
         }
 
+        .msg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, .3);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        .msg p {
+            border: 2px solid #fff;
+            padding: 1em;
+            background: aqua;
+            color: #fff;
+        }
+
+        .tip {
+            width: 150px;
+            text-align: center;
+        }
+
         .next {
-            width: 100px;
-            height: 100px;
             position: relative;
+            display: inline-block;
+        }
+
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+            text-align: center;
+            color: aqua;
         }
 
         .col {
@@ -33,18 +61,35 @@
 
 <body>
     <div id="root">
-        <div class="panel"></div>
+        <div class="panel">
+            <div class="msg">
+                <p>
+                    游戏暂停
+                </p>
+            </div>
+        </div>
         <div class="tip">
             <div class="next"></div>
+            <div class="score"></div>
+            <p>
+                使用按键进行游戏
+            </p>
+            <p>
+                ⬆：旋转
+            </p>
+            <p>
+                ⬅：向左
+            </p>
+            <p>
+                ➡：向右
+            </p>
+            <p>
+                ⬇：向下
+            </p>
+            <p>
+                空格：暂停 / 恢复
+            </p>
         </div>
-    </div>
-    <div class="col">
-        <button class="start">开始</button>
-        <button class="pause">暂停</button>
-        <button class="rotate">旋转</button>
-        <button class="down">下</button>
-        <button class="left">左</button>
-        <button class="right">右</button>
     </div>
 </body>
 
