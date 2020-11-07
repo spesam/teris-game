@@ -18,6 +18,7 @@ export class Game {
     private duration: number = 1000;
     // 已保存的方块
     private _exists: Square[] = [];
+
     constructor(private _viewer: GameViewer) {
         this.resetCenterPoint(GameConfig.nextArea.width, this._nextTeris);
         this._viewer.showNext(this._nextTeris);
@@ -38,26 +39,26 @@ export class Game {
 
     controlLeft() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.move(this._curTeris, MoveDirection.left,this._exists);
+            TerisRule.move(this._curTeris, MoveDirection.left, this._exists);
         }
     }
 
     controlRight() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.move(this._curTeris, MoveDirection.right,this._exists);
+            TerisRule.move(this._curTeris, MoveDirection.right, this._exists);
         }
     }
 
     controlDown() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.alwaysMove(this._curTeris, MoveDirection.down,this._exists);
+            TerisRule.alwaysMove(this._curTeris, MoveDirection.down, this._exists);
             this.hitBottom();
         }
     }
 
     controlRotate() {
         if (this._curTeris && this._gameStatus === GameStatus.gameOn) {
-            TerisRule.rotate(this._curTeris,this._exists);
+            TerisRule.rotate(this._curTeris, this._exists);
         }
     }
     /**
@@ -76,6 +77,10 @@ export class Game {
     hitBottom() {
         // 将当前的方块加入到已存在的方块中
         this._exists.push(...this._curTeris?.squares!);
+        // 处理移除
+        const num = TerisRule.deleteSquare(this._exists);
+        console.log(num);
+
         this.switchTeris();
     }
 
@@ -98,7 +103,7 @@ export class Game {
             return
         }
         this._timer = setInterval(() => {
-            const isMove = TerisRule.move(this._curTeris!, MoveDirection.down,this._exists);
+            const isMove = TerisRule.move(this._curTeris!, MoveDirection.down, this._exists);
             if (!isMove) {
                 // 触底，不能往下移动了
                 this.hitBottom();
