@@ -32,9 +32,9 @@ export class Game {
     public set score(val) {
         this._score = val;
         this._viewer.showScore(val);
-        const level = GameConfig.level.filter(item => item.score < val).pop()!;
+        const level = GameConfig.level.filter(item => item.score <= val).pop()!;
         if (level.duration === this._duration) {
-            return
+            return;
         }
         this._duration = level.duration;
         if (this._timer) {
@@ -71,7 +71,7 @@ export class Game {
     }
     // 游戏开始
     public start() {
-        // 游戏状态的改变
+        // 游戏状态的改变    
         if (this._gameStatus === GameStatus.gameOn) {
             return;
         }
@@ -154,6 +154,7 @@ export class Game {
             clearInterval(this._timer);
             this._timer = undefined;
             this._viewer.onGameOver();
+            this._duration = 0;
             return;
         }
 
