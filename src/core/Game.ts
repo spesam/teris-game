@@ -1,8 +1,8 @@
-import { GameStatus, GameViewer, MoveDirection } from "../types";
+import { GameStatus, IGameViewer, MoveDirection } from "../types";
 import { GameConfig } from "./GameConfig";
 import { Square } from "./Square";
 import { SquareGroup } from "./SquareGroup";
-import { createTeris, TShapeTeris } from "./Teris";
+import { createTeris } from "./Teris";
 import { TerisRule } from "./TerisRule";
 
 export class Game {
@@ -11,7 +11,7 @@ export class Game {
     // 当前方块
     private _curTeris?: SquareGroup;
     // 下一个方块
-    private _nextTeris: SquareGroup = createTeris({ x: 0, y: 0 });
+    private _nextTeris: SquareGroup
     // 计时器
     private _timer?: number;
     // 间隔时间
@@ -19,19 +19,39 @@ export class Game {
     // 已保存的方块
     private _exists: Square[] = [];
 
-    constructor(private _viewer: GameViewer) {
+    constructor(private _viewer: IGameViewer) {
+        this._nextTeris = createTeris({ x: 0, y: 0 }); //没有含义，只是为了不让TS报错
+        this.createNext();
+    }
+
+    private createNext() {
+        this._nextTeris = createTeris({ x: 0, y: 0 });
         this.resetCenterPoint(GameConfig.nextArea.width, this._nextTeris);
         this._viewer.showNext(this._nextTeris);
     }
 
+    private init() {
+        this._exists.forEach(sq => {
+            if (sq.viewer) {
+                sq.viewer.remove();
+            }
+        })
+        this._exists = [];
+        this.createNext();
+        this._curTeris = undefined;
+    }
     // 游戏开始
     public start() {
+        // 游戏状态的改变
         if (this._gameStatus === GameStatus.gameOn) {
             return;
         }
+        // 从游戏结束到开始
+        if (this._gameStatus === GameStatus.gameOver) {
+            this.init();
+        }
         this._gameStatus = GameStatus.gameOn;
         if (!this._curTeris) {
-            this._curTeris = this._nextTeris;
             this.switchTeris();
         };
         this.autoDrop();
@@ -89,11 +109,26 @@ export class Game {
      */
     private switchTeris() {
         this._curTeris = this._nextTeris;
+        this._curTeris.squares.forEach(sq => {
+            if(sq.viewer){
+                sq.viewer.remove();
+            }
+        })
+        console.log(this._curTeris.squares);
         this.resetCenterPoint(GameConfig.gameArea.width, this._curTeris!);
-        this._nextTeris = createTeris({ x: 0, y: 0 });
-        this.resetCenterPoint(GameConfig.nextArea.width, this._nextTeris);
+        console.log(this._curTeris.squares);
+        // 有可能出现的问题：当前方一出现时，就已经和之前的方块重叠了
+        if (!TerisRule.canIMove(this._curTeris.shape, this._curTeris.centerPoint, this._exists)) {
+            // 游戏结束
+            this._gameStatus = GameStatus.gameOver;
+            clearInterval(this._timer);
+            this._timer = undefined;
+            console.log("游戏结束了");
+
+            return;
+        }
+        this.createNext();
         this._viewer.switchTeris(this._curTeris);
-        this._viewer.showNext(this._nextTeris);
     };
     /**
      * 方块自由下落
@@ -121,12 +156,10 @@ export class Game {
         const y = 0;
         teris.centerPoint = { x, y };
         while (teris.squares.some(sq => sq.point.y < 0)) {
-            teris.squares.forEach(sq => {
-                sq.point = {
-                    x: sq.point.x,
-                    y: sq.point.y + 1,
-                }
-            })
+            teris.centerPoint = {
+                x: teris.centerPoint.x,
+                y: teris.centerPoint.y + 1,
+            }
         }
     }
 }

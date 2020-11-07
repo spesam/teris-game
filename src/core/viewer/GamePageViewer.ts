@@ -1,8 +1,8 @@
-import { GameViewer } from "../../types";
+import { IGameViewer } from "../../types";
 import { SquareGroup } from "../SquareGroup";
 import { SquarePageViewer } from "./SquarePageViewer";
 import $ from "jquery";
-export class GamePageViewer implements GameViewer {
+export class GamePageViewer implements IGameViewer {
     showNext(teris: SquareGroup): void {
         teris.squares.forEach(sq => {
             sq.viewer = new SquarePageViewer(sq, $(".next"));

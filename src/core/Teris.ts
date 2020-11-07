@@ -42,7 +42,7 @@ export class OShapeTeris extends SquareGroup {
     }
 
     rotateAfterShape() {
-        return this.shape 
+        return this.shape
     }
 }
 
@@ -73,12 +73,12 @@ export const ZShape: Shape = [{ x: -1, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 1 }, {
 
 
 const terisShapees = [
-    // LineShapeTeris,
-    // TShapeTeris,
-    // PShapeTeris,
-    // LShapeTeris,
+    LineShapeTeris,
+    TShapeTeris,
+    PShapeTeris,
+    LShapeTeris,
     OShapeTeris,
-    // ZShapeTeris
+    ZShapeTeris,
 ]
 
 

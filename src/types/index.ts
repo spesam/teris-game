@@ -1,5 +1,4 @@
-import { Square } from "../core/Square"
-import { SquareGroup } from "../core/SquareGroup"
+import { SquareGroup } from "../core/SquareGroup";
 
 export interface IPoint {
     readonly x: number;
@@ -33,7 +32,7 @@ export enum GameStatus {
     gameOver,
 }
 
-export interface GameViewer {
+export interface IGameViewer {
     /**
      * 显示下一个方块
      * @param teris 下一个方块
