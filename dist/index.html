@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>俄罗斯方块</title><style>#root {
+            display: flex;
+            justify-content: center;
+        }
+
+        .panel {
+            position: relative;
+            background: #000;
+        }
+
+        .msg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, .3);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        .msg p {
+            border: 2px solid #fff;
+            padding: 1em;
+            background: aqua;
+            color: #fff;
+        }
+
+        .tip {
+            width: 150px;
+            text-align: center;
+        }
+
+        .next {
+            position: relative;
+            display: inline-block;
+        }
+
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+            text-align: center;
+            color: aqua;
+        }
+
+        .col {
+            position: absolute;
+            top: 510px;
+        }</style></head><body><div id="root"><div class="panel"><div class="msg"><p>游戏暂停</p></div></div><div class="tip"><div class="next"></div><div class="score"></div><p>使用按键进行游戏</p><p>⬆：旋转</p><p>⬅：向左</p><p>➡：向右</p><p>⬇：向下</p><p>空格：暂停 / 恢复</p></div></div><script src="bundle.js"></script></body></html>
